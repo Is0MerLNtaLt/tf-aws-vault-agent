@@ -41,7 +41,7 @@ template {
 
 template {
   source      = "/opt/nvc/consul/tpl/acl_config.txt.tpl"
-  destination = "/opt/nvc/consul/tls/acl_config.txt"
+  destination = "/opt/nvc/consul/acl_config.txt"
 }
 EOF
 )
