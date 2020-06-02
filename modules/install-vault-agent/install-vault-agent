@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+sudo mkdir -p /opt/vault-agent/data
+sudo mkdir -p /opt/vault-agent/config
+sudo mkdir -p /opt/vault-agent/bin
+sudo touch /opt/vault-agent/data/vault-token
+sudo cp /tmp/tf-aws-vault-agent/modules/run-vault-agent/* /opt/vault-agent/bin/
+sudo useradd "vault-agent"
+sudo chown -R "vault-agent:vault-agent" /opt/vault-agent

@@ -1,0 +1,85 @@
+#!/bin/bash
+set -e
+
+readonly vault_agent_config=$(cat << EOF
+pid_file   = "/opt/vault-agent/data/vault-pid"
+vault {
+  address = "https://vault.gvr.com:8200"
+  ca_cert = "/opt/nvc/vault/tls/ca.pem"
+}
+
+auto_auth {
+  method "aws" {
+    mount_path = "auth/aws"
+    config = {
+      type = "iam"
+      role = "vault-agent"
+    }
+  }
+
+  sink "file" {
+    config = {
+      path = "/opt/vault-agent/data/vault-token"
+    }
+  }
+}
+
+template {
+  source      = "/opt/nvc/consul/tpl/ca.pem.tpl"
+  destination = "/opt/nvc/consul/tls/ca.pem"
+}
+
+template {
+  source      = "/opt/nvc/consul/tpl/cert.pem.tpl"
+  destination = "/opt/nvc/consul/tls/cert.pem"
+}
+
+template {
+  source      = "/opt/nvc/consul/tpl/key.pem.tpl"
+  destination = "/opt/nvc/consul/tls/key.pem"
+}
+EOF
+)
+
+sudo echo -e "$vault_agent_config" > "/opt/vault-agent/config/default.hcl"
+
+readonly vault_agent_systemd_file=$(cat << EOF
+[Unit]
+Description=\"HashiCorp Vault Agent\"
+Documentation=https://www.vaultproject.io/docs/
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=/opt/vault-agent/config/default.hcl
+[Service]
+User=vault-agent
+Group=vault-agent
+ProtectSystem=full
+ProtectHome=read-only
+PrivateTmp=yes
+PrivateDevices=yes
+SecureBits=keep-caps
+AmbientCapabilities=CAP_IPC_LOCK
+Capabilities=CAP_IPC_LOCK+ep
+CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
+NoNewPrivileges=yes
+ExecStart=/opt/vault/bin/vault agent -config /opt/vault-agent/config/default.hcl -log-level=info
+ExecReload=/bin/kill --signal HUP $MAINPID
+KillMode=process
+KillSignal=SIGINT
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+StartLimitIntervalSec=60
+StartLimitBurst=3
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+)
+
+sudo echo -e "$vault_agent_systemd_file" > "/etc/systemd/system/vault-agent.service"
+
+sudo systemctl daemon-reload
+sudo systemctl enable vault-agent.service
+sudo systemctl restart vault-agent.service
