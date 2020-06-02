@@ -38,6 +38,11 @@ template {
   source      = "/opt/nvc/consul/tpl/key.pem.tpl"
   destination = "/opt/nvc/consul/tls/key.pem"
 }
+
+template {
+  source      = "/opt/nvc/consul/tpl/acl_config.txt.tpl"
+  destination = "/opt/nvc/consul/tls/acl_config.txt"
+}
 EOF
 )
 
