@@ -40,17 +40,17 @@ template {
 }
 
 template {
-  source      = "/opt/caddy/tpl/consul/ca.pem.tpl"
+  source      = "/opt/nvc/caddy/tpl/consul/ca.pem.tpl"
   destination = "/opt/caddy/tls/consul/ca.pem"
 }
 
 template {
-  source      = "/opt/caddy/tpl/consul/cert.pem.tpl"
+  source      = "/opt/nvc/caddy/tpl/consul/cert.pem.tpl"
   destination = "/opt/caddy/tls/consul/cert.pem"
 }
 
 template {
-  source      = "/opt/caddy/tpl/consul/key.pem.tpl"
+  source      = "/opt/nvc/caddy/tpl/consul/key.pem.tpl"
   destination = "/opt/caddy/tls/consul/key.pem"
 }
 
