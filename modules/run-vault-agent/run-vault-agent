@@ -40,21 +40,6 @@ template {
 }
 
 template {
-  source      = "/opt/nvc/caddy/tpl/consul/ca.pem.tpl"
-  destination = "/opt/caddy/tls/consul/ca.pem"
-}
-
-template {
-  source      = "/opt/nvc/caddy/tpl/consul/cert.pem.tpl"
-  destination = "/opt/caddy/tls/consul/cert.pem"
-}
-
-template {
-  source      = "/opt/nvc/caddy/tpl/consul/key.pem.tpl"
-  destination = "/opt/caddy/tls/consul/key.pem"
-}
-
-template {
   source      = "/opt/nvc/consul/tpl/vs_acl_config.txt.tpl"
   destination = "/opt/nvc/consul/acl_config.txt"
 }
